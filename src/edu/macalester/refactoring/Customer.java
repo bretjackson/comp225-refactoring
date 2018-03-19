@@ -17,40 +17,22 @@ public class Customer {
     }
 
     public void addRental(Rental rental) {
+
         rentals.add(rental);
     }
 
-    public String statement() {
+    public String formatTextStatement() {
         double totalAmount = 0;
         int frequentRenterPoints = 0;
 
         String result = "Rental record for " + getName() + "\n";
-        for (Rental r : rentals) {
-            double amount = 0;
-            switch (r.getMovie().getPriceCode()) {
-                case Movie.REGULAR:
-                    amount += 2;
-                    if (r.getDaysRented() > 2)
-                        amount += (r.getDaysRented() - 2) * 1.5;
-                    break;
-                case Movie.NEW_RELEASE:
-                    amount += r.getDaysRented() * 3;
-                    break;
-                case Movie.CHILDREN:
-                    amount += 1.5;
-                    if (r.getDaysRented() > 3)
-                        amount += (r.getDaysRented() - 3) * 1.5;
-                    break;
-            }
+        for (Rental rental : rentals) {
+            double amount = rental.calcRentalFee();
 
-            // add frequent renter points
-            frequentRenterPoints++;
-            // add bonus for a two day new release rental
-            if (r.getMovie().getPriceCode() == Movie.NEW_RELEASE && r.getDaysRented() > 1)
-                frequentRenterPoints++;
+            frequentRenterPoints += rental.getFrequentRentalPoints();
 
             // show figures for this rental
-            result += "\t" + r.getMovie().getTitle() + "\t" + String.valueOf(amount) + "\n";
+            result += "\t" + rental.getMovie().getTitle() + "\t" + String.valueOf(amount) + "\n";
 
             totalAmount += amount;
         }
@@ -60,4 +42,5 @@ public class Customer {
 
         return result;
     }
+
 }
